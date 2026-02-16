@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Abhishek's Money-Making Project Map</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+            rel="stylesheet">
+        <style>
+            :root {
+                --bg: #0a0a0f;
+                --surface: #12121a;
+                --card: #1a1a26;
+                --border: #2a2a3d;
+                --accent: #7c6cfc;
+                --accent2: #fc6c8f;
+                --accent3: #6cfcb8;
+                --text: #e8e8f0;
+                --muted: #6b6b8a;
+                --highlight: #ffd166;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: 'Syne', sans-serif;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            /* Noise overlay */
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+                pointer-events: none;
+                z-index: 0;
+                opacity: 0.4;
+            }
+
+            .glow-orb {
+                position: fixed;
+                border-radius: 50%;
+                filter: blur(120px);
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            .orb1 {
+                width: 500px;
+                height: 500px;
+                background: rgba(124, 108, 252, 0.12);
+                top: -100px;
+                right: -100px;
+            }
+
+            .orb2 {
+                width: 400px;
+                height: 400px;
+                background: rgba(252, 108, 143, 0.08);
+                bottom: 100px;
+                left: -100px;
+            }
+
+            .container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 48px 24px 80px;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Header */
+            .header {
+                margin-bottom: 48px;
+                animation: fadeSlideDown 0.7s ease both;
+            }
+
+            .header-tag {
+                display: inline-block;
+                font-family: 'DM Mono', monospace;
+                font-size: 11px;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: var(--accent3);
+                border: 1px solid rgba(108, 252, 184, 0.3);
+                padding: 4px 12px;
+                border-radius: 100px;
+                margin-bottom: 16px;
+            }
+
+            h1 {
+                font-size: clamp(2rem, 5vw, 3.2rem);
+                font-weight: 800;
+                line-height: 1.1;
+                margin-bottom: 12px;
+            }
+
+            h1 span.name {
+                color: var(--accent);
+            }
+
+            h1 span.highlight {
+                background: linear-gradient(90deg, var(--accent2), var(--highlight));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .header-sub {
+                font-family: 'DM Mono', monospace;
+                color: var(--muted);
+                font-size: 13px;
+                line-height: 1.6;
+            }
+
+            .stack-pills {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 20px;
+            }
+
+            .pill {
+                font-family: 'DM Mono', monospace;
+                font-size: 11px;
+                padding: 3px 10px;
+                border-radius: 100px;
+                border: 1px solid var(--border);
+                color: var(--muted);
+                background: var(--surface);
+            }
+
+            /* Filter tabs */
+            .filters {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-bottom: 32px;
+                animation: fadeSlideDown 0.7s 0.1s ease both;
+            }
+
+            .filter-btn {
+                font-family: 'Syne', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
+                padding: 8px 18px;
+                border-radius: 100px;
+                border: 1px solid var(--border);
+                background: var(--surface);
+                color: var(--muted);
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .filter-btn:hover {
+                border-color: var(--accent);
+                color: var(--text);
+            }
+
+            .filter-btn.active {
+                background: var(--accent);
+                border-color: var(--accent);
+                color: white;
+            }
+
+            /* Stats bar */
+            .stats-bar {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                margin-bottom: 40px;
+                animation: fadeSlideDown 0.7s 0.15s ease both;
+            }
+
+            .stat-card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 16px 20px;
+                text-align: center;
+            }
+
+            .stat-num {
+                font-size: 1.8rem;
+                font-weight: 800;
+                color: var(--accent);
+            }
+
+            .stat-label {
+                font-family: 'DM Mono', monospace;
+                font-size: 11px;
+                color: var(--muted);
+                margin-top: 2px;
+            }
+
+            /* Cards grid */
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 20px;
+            }
+
+            .card {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 24px;
+                cursor: pointer;
+                transition: all 0.25s;
+                animation: fadeSlideUp 0.6s ease both;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: var(--card-accent, var(--accent));
+                opacity: 0;
+                transition: opacity 0.25s;
+            }
+
+            .card:hover {
+                border-color: var(--card-accent, var(--accent));
+                transform: translateY(-3px);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            }
+
+            .card:hover::before {
+                opacity: 1;
+            }
+
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 14px;
+            }
+
+            .card-icon {
+                font-size: 28px;
+                line-height: 1;
+            }
+
+            .badge-row {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+            }
+
+            .badge {
+                font-family: 'DM Mono', monospace;
+                font-size: 10px;
+                padding: 2px 8px;
+                border-radius: 100px;
+                font-weight: 500;
+            }
+
+            .badge-difficulty {
+                background: rgba(255, 209, 102, 0.15);
+                color: var(--highlight);
+                border: 1px solid rgba(255, 209, 102, 0.3);
+            }
+
+            .badge-revenue {
+                background: rgba(108, 252, 184, 0.1);
+                color: var(--accent3);
+                border: 1px solid rgba(108, 252, 184, 0.25);
+            }
+
+            .card h2 {
+                font-size: 1.05rem;
+                font-weight: 700;
+                margin-bottom: 8px;
+                line-height: 1.3;
+            }
+
+            .card p {
+                font-family: 'DM Mono', monospace;
+                font-size: 12px;
+                color: var(--muted);
+                line-height: 1.7;
+                margin-bottom: 16px;
+            }
+
+            .card-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                margin-bottom: 16px;
+            }
+
+            .tag {
+                font-family: 'DM Mono', monospace;
+                font-size: 10px;
+                padding: 2px 8px;
+                border-radius: 4px;
+                background: rgba(124, 108, 252, 0.1);
+                color: rgba(124, 108, 252, 0.9);
+                border: 1px solid rgba(124, 108, 252, 0.2);
+            }
+
+            .card-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 14px;
+                border-top: 1px solid var(--border);
+            }
+
+            .revenue-range {
+                font-weight: 700;
+                font-size: 0.9rem;
+                color: var(--accent3);
+            }
+
+            .expand-btn {
+                font-family: 'DM Mono', monospace;
+                font-size: 11px;
+                color: var(--accent);
+                background: rgba(124, 108, 252, 0.1);
+                border: 1px solid rgba(124, 108, 252, 0.3);
+                padding: 4px 12px;
+                border-radius: 100px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .expand-btn:hover {
+                background: var(--accent);
+                color: white;
+            }
+
+            /* Detail panel */
+            .detail-panel {
+                display: none;
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid var(--border);
+                animation: expandDown 0.3s ease;
+            }
+
+            .detail-panel.open {
+                display: block;
+            }
+
+            .detail-section {
+                margin-bottom: 14px;
+            }
+
+            .detail-label {
+                font-family: 'DM Mono', monospace;
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                color: var(--muted);
+                margin-bottom: 6px;
+            }
+
+            .detail-list {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .detail-list li {
+                font-family: 'DM Mono', monospace;
+                font-size: 11.5px;
+                color: var(--text);
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                line-height: 1.5;
+            }
+
+            .detail-list li::before {
+                content: '→';
+                color: var(--accent);
+                flex-shrink: 0;
+                margin-top: 1px;
+            }
+
+            .progress-bar-wrap {
+                height: 4px;
+                background: var(--border);
+                border-radius: 100px;
+                overflow: hidden;
+                margin-top: 4px;
+            }
+
+            .progress-bar-fill {
+                height: 100%;
+                background: linear-gradient(90deg, var(--accent), var(--accent2));
+                border-radius: 100px;
+            }
+
+            .fit-meter {
+                margin-top: 12px;
+            }
+
+            .fit-label {
+                font-family: 'DM Mono', monospace;
+                font-size: 10px;
+                color: var(--muted);
+                margin-bottom: 4px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            /* Hidden cards */
+            .card.hidden {
+                display: none;
+            }
+
+            /* Bottom CTA */
+            .cta-box {
+                margin-top: 48px;
+                background: linear-gradient(135deg, rgba(124, 108, 252, 0.1), rgba(252, 108, 143, 0.08));
+                border: 1px solid rgba(124, 108, 252, 0.25);
+                border-radius: 16px;
+                padding: 32px;
+                text-align: center;
+                animation: fadeSlideUp 0.6s 0.5s ease both;
+            }
+
+            .cta-box h3 {
+                font-size: 1.3rem;
+                font-weight: 800;
+                margin-bottom: 8px;
+            }
+
+            .cta-box p {
+                font-family: 'DM Mono', monospace;
+                font-size: 13px;
+                color: var(--muted);
+                margin-bottom: 16px;
+            }
+
+            .cta-steps {
+                display: flex;
+                justify-content: center;
+                gap: 32px;
+                flex-wrap: wrap;
+            }
+
+            .cta-step {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .step-num {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: var(--accent);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 14px;
+            }
+
+            .step-text {
+                font-family: 'DM Mono', monospace;
+                font-size: 11px;
+                color: var(--text);
+                text-align: center;
+                max-width: 100px;
+            }
+
+            @keyframes fadeSlideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-16px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeSlideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes expandDown {
+                from {
+                    opacity: 0;
+                    transform: scaleY(0.9);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: scaleY(1);
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="glow-orb orb1"></div>
+        <div class="glow-orb orb2"></div>
+
+        <div class="container">
+
+            <!-- Header -->
+            <div class="header">
+                <div class="header-tag">🏔️ Built for Abhishek Jaswal · Dharamshala, India</div>
+                <h1>Your <span class="name">Money-Making</span><br>Project <span class="highlight">Roadmap</span></h1>
+                <p class="header-sub">Real problems → Real revenue · Matched to your exact tech stack</p>
+                <div class="stack-pills">
+                    <span class="pill">Next.js</span>
+                    <span class="pill">React</span>
+                    <span class="pill">TypeScript</span>
+                    <span class="pill">Supabase</span>
+                    <span class="pill">Node.js</span>
+                    <span class="pill">Tailwind</span>
+                    <span class="pill">Vercel</span>
+                    <span class="pill">Socket.IO</span>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-num">6</div>
+                    <div class="stat-label">Project Ideas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--accent3)">₹5K–80K</div>
+                    <div class="stat-label">Est. Monthly Range</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--highlight)">3+</div>
+                    <div class="stat-label">Quick-Start (2–4 wks)</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterCards('all', this)">All Projects</button>
+                <button class="filter-btn" onclick="filterCards('saas', this)">SaaS</button>
+                <button class="filter-btn" onclick="filterCards('freelance', this)">Freelance Tool</button>
+                <button class="filter-btn" onclick="filterCards('local', this)">Local Market</button>
+                <button class="filter-btn" onclick="filterCards('quick', this)">⚡ Quick Win</button>
+            </div>
+
+            <!-- Cards -->
+            <div class="grid" id="cards-grid">
+
+                <!-- Card 1 -->
+                <div class="card" data-cat="saas quick" style="--card-accent: #7c6cfc; animation-delay: 0.1s">
+                    <div class="card-header">
+                        <div class="card-icon">🎓</div>
+                        <div class="badge-row">
+                            <span class="badge badge-difficulty">Medium</span>
+                            <span class="badge badge-revenue">High ROI</span>
+                        </div>
+                    </div>
+                    <h2>Student Placement & Training Portal</h2>
+                    <p>A SaaS platform for IT training institutes (like your old employer CIIMCM) to manage students,
+                        track progress, issue certificates, and connect graduates with jobs. You've lived this problem.
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">Next.js</span>
+                        <span class="tag">Supabase</span>
+                        <span class="tag">Real-time</span>
+                        <span class="tag">Auth</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="revenue-range">₹15K–40K/mo</span>
+                        <button class="expand-btn" onclick="toggle(this)">View Details ↓</button>
+                    </div>
+                    <div class="detail-panel">
+                        <div class="detail-section">
+                            <div class="detail-label">Why you're perfect for this</div>
+                            <ul class="detail-list">
+                                <li>You trained 60+ students — you know the pain points firsthand</li>
+                                <li>Your existing network at CIIMCM is a warm sales channel</li>
+                                <li>Already built auth + dashboards in your Fund Tracker project</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Revenue model</div>
+                            <ul class="detail-list">
+                                <li>₹2,000–5,000/month per institute (B2B SaaS)</li>
+                                <li>10 institutes = ₹20K–50K/month recurring</li>
+                                <li>Add job board listings as premium feature</li>
+                            </ul>
+                        </div>
+                        <div class="fit-meter">
+                            <div class="fit-label"><span>Skill Fit</span><span>95%</span></div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width:95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card" data-cat="local quick freelance"
+                    style="--card-accent: #fc6c8f; animation-delay: 0.15s">
+                    <div class="card-header">
+                        <div class="card-icon">🏔️</div>
+                        <div class="badge-row">
+                            <span class="badge badge-difficulty">Easy</span>
+                            <span class="badge badge-revenue">Quick Cash</span>
+                        </div>
+                    </div>
+                    <h2>Himachal Tourism Lead System</h2>
+                    <p>You already built thenorthhimalayas.com! Turn that into a product — a white-label lead generation
+                        + booking management system for local tour operators, hotels, and adventure companies in HP.</p>
+                    <div class="card-tags">
+                        <span class="tag">Next.js</span>
+                        <span class="tag">SEO</span>
+                        <span class="tag">Lead Forms</span>
+                        <span class="tag">Tailwind</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="revenue-range">₹5K–20K/mo</span>
+                        <button class="expand-btn" onclick="toggle(this)">View Details ↓</button>
+                    </div>
+                    <div class="detail-panel">
+                        <div class="detail-section">
+                            <div class="detail-label">Why you're perfect for this</div>
+                            <ul class="detail-list">
+                                <li>The North Himalayas site is already proof of concept</li>
+                                <li>Local businesses in Dharamshala have almost zero web presence</li>
+                                <li>You can charge ₹15K setup + ₹3K/month maintenance per client</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Revenue model</div>
+                            <ul class="detail-list">
+                                <li>5 local clients = ₹75K setup + ₹15K/month recurring</li>
+                                <li>Expand to Manali, Kasol, Spiti valley operators</li>
+                                <li>Add WhatsApp auto-reply integration as upsell</li>
+                            </ul>
+                        </div>
+                        <div class="fit-meter">
+                            <div class="fit-label"><span>Skill Fit</span><span>98%</span></div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width:98%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card" data-cat="saas" style="--card-accent: #6cfcb8; animation-delay: 0.2s">
+                    <div class="card-header">
+                        <div class="card-icon">🤖</div>
+                        <div class="badge-row">
+                            <span class="badge badge-difficulty">Medium</span>
+                            <span class="badge badge-revenue">Scalable</span>
+                        </div>
+                    </div>
+                    <h2>AI Mock Interview SaaS</h2>
+                    <p>You already built an AI Interview Portal! Polish it, add subscription payments, and launch it as
+                        a paid product. Target Indian engineering students preparing for placements and FAANG
+                        interviews.</p>
+                    <div class="card-tags">
+                        <span class="tag">Next.js</span>
+                        <span class="tag">OpenAI API</span>
+                        <span class="tag">Hasura</span>
+                        <span class="tag">Stripe/Razorpay</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="revenue-range">₹20K–80K/mo</span>
+                        <button class="expand-btn" onclick="toggle(this)">View Details ↓</button>
+                    </div>
+                    <div class="detail-panel">
+                        <div class="detail-section">
+                            <div class="detail-label">Why you're perfect for this</div>
+                            <ul class="detail-list">
+                                <li>You already have 80% of the product built — just monetize it</li>
+                                <li>As a trainer, you know what students struggle with in interviews</li>
+                                <li>India has millions of students preparing for placement every year</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Revenue model</div>
+                            <ul class="detail-list">
+                                <li>₹299/month basic, ₹799/month pro plan</li>
+                                <li>100 users = ₹30K–80K/month</li>
+                                <li>Partner with college placement cells for bulk licenses</li>
+                            </ul>
+                        </div>
+                        <div class="fit-meter">
+                            <div class="fit-label"><span>Skill Fit</span><span>92%</span></div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width:92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="card" data-cat="saas quick" style="--card-accent: #ffd166; animation-delay: 0.25s">
+                    <div class="card-header">
+                        <div class="card-icon">💰</div>
+                        <div class="badge-row">
+                            <span class="badge badge-difficulty">Medium</span>
+                            <span class="badge badge-revenue">B2B Revenue</span>
+                        </div>
+                    </div>
+                    <h2>SME Fund & Cash Flow Tracker</h2>
+                    <p>Expand your Fund Tracking System into a full SME financial dashboard. Small businesses in India
+                        desperately need affordable tools to track income, expenses, and tax estimates — without
+                        enterprise pricing.</p>
+                    <div class="card-tags">
+                        <span class="tag">Next.js</span>
+                        <span class="tag">Supabase</span>
+                        <span class="tag">Real-time</span>
+                        <span class="tag">Charts</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="revenue-range">₹15K–50K/mo</span>
+                        <button class="expand-btn" onclick="toggle(this)">View Details ↓</button>
+                    </div>
+                    <div class="detail-panel">
+                        <div class="detail-section">
+                            <div class="detail-label">Why you're perfect for this</div>
+                            <ul class="detail-list">
+                                <li>Your Fund Tracker project is direct proof of concept</li>
+                                <li>Local Dharamshala businesses need affordable accounting tools</li>
+                                <li>Quickbooks/Zoho are too complex and expensive for small shops</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Revenue model</div>
+                            <ul class="detail-list">
+                                <li>₹499/month per business (very affordable for SMEs)</li>
+                                <li>Target: local shops, freelancers, tour operators, NGOs</li>
+                                <li>20 clients = ₹10K/month; 100 clients = ₹50K/month</li>
+                            </ul>
+                        </div>
+                        <div class="fit-meter">
+                            <div class="fit-label"><span>Skill Fit</span><span>97%</span></div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width:97%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="card" data-cat="freelance quick local"
+                    style="--card-accent: #fc6c8f; animation-delay: 0.3s">
+                    <div class="card-header">
+                        <div class="card-icon">🏥</div>
+                        <div class="badge-row">
+                            <span class="badge badge-difficulty">Easy</span>
+                            <span class="badge badge-revenue">Niche Win</span>
+                        </div>
+                    </div>
+                    <h2>Local Clinic / NGO Digital System</h2>
+                    <p>Himachal Pradesh has hundreds of small clinics, NGOs, and trusts (like CIIMCM) with zero digital
+                        infrastructure. Build simple appointment + record management systems for them — a highly
+                        underserved niche.</p>
+                    <div class="card-tags">
+                        <span class="tag">Next.js</span>
+                        <span class="tag">Supabase</span>
+                        <span class="tag">Auth</span>
+                        <span class="tag">WhatsApp API</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="revenue-range">₹8K–25K/mo</span>
+                        <button class="expand-btn" onclick="toggle(this)">View Details ↓</button>
+                    </div>
+                    <div class="detail-panel">
+                        <div class="detail-section">
+                            <div class="detail-label">Why you're perfect for this</div>
+                            <ul class="detail-list">
+                                <li>Your CIIMCM network gives you direct access to NGO decision-makers</li>
+                                <li>Competition is almost zero in this regional niche</li>
+                                <li>You can build these fast with your existing stack</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Revenue model</div>
+                            <ul class="detail-list">
+                                <li>₹10K–20K one-time setup + ₹2K–3K monthly maintenance</li>
+                                <li>Start with 3–4 clients in Dharamshala, expand to Kangra district</li>
+                                <li>Government health scheme digitization can unlock grants</li>
+                            </ul>
+                        </div>
+                        <div class="fit-meter">
+                            <div class="fit-label"><span>Skill Fit</span><span>93%</span></div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width:93%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="card" data-cat="saas" style="--card-accent: #7c6cfc; animation-delay: 0.35s">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <div class="badge-row">
+                            <span class="badge badge-difficulty">Hard</span>
+                            <span class="badge badge-revenue">Max Revenue</span>
+                        </div>
+                    </div>
+                    <h2>Developer Portfolio & Hiring Platform</h2>
+                    <p>Build a niche job board + portfolio platform specifically for Indian full-stack developers.
+                        Companies post jobs, developers showcase verified projects. Think LinkedIn meets GitHub, but
+                        simpler and India-focused.</p>
+                    <div class="card-tags">
+                        <span class="tag">Next.js</span>
+                        <span class="tag">Supabase</span>
+                        <span class="tag">GitHub API</span>
+                        <span class="tag">Razorpay</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="revenue-range">₹30K–100K/mo</span>
+                        <button class="expand-btn" onclick="toggle(this)">View Details ↓</button>
+                    </div>
+                    <div class="detail-panel">
+                        <div class="detail-section">
+                            <div class="detail-label">Why you're perfect for this</div>
+                            <ul class="detail-list">
+                                <li>You've trained developers — you understand what companies want</li>
+                                <li>Your own portfolio is the first proof-of-concept</li>
+                                <li>India has massive developer talent with no good niche discovery layer</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Revenue model</div>
+                            <ul class="detail-list">
+                                <li>Companies pay ₹2,000–5,000 to post verified job listings</li>
+                                <li>Developers pay ₹199/month for premium profile features</li>
+                                <li>Placement commission model for successful hires</li>
+                            </ul>
+                        </div>
+                        <div class="fit-meter">
+                            <div class="fit-label"><span>Skill Fit</span><span>88%</span></div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width:88%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CTA Bottom -->
+            <div class="cta-box">
+                <h3>🚀 Recommended Starting Point</h3>
+                <p>Based on your background, start with the Tourism Lead System or Training Portal — both use skills you
+                    already have and clients you already know.</p>
+                <div class="cta-steps">
+                    <div class="cta-step">
+                        <div class="step-num">1</div>
+                        <div class="step-text">Pick your project idea</div>
+                    </div>
+                    <div class="cta-step">
+                        <div class="step-num">2</div>
+                        <div class="step-text">Build MVP in 2–4 weeks</div>
+                    </div>
+                    <div class="cta-step">
+                        <div class="step-num">3</div>
+                        <div class="step-text">Get first paying customer</div>
+                    </div>
+                    <div class="cta-step">
+                        <div class="step-num">4</div>
+                        <div class="step-text">Iterate & scale revenue</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+            function toggle(btn) {
+                const panel = btn.closest('.card').querySelector('.detail-panel');
+                const isOpen = panel.classList.contains('open');
+                panel.classList.toggle('open');
+                btn.textContent = isOpen ? 'View Details ↓' : 'Hide Details ↑';
+            }
+
+            function filterCards(cat, btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                document.querySelectorAll('.card').forEach(card => {
+                    if (cat === 'all') {
+                        card.classList.remove('hidden');
+                    } else {
+                        const cats = card.getAttribute('data-cat') || '';
+                        if (cats.includes(cat)) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    }
+                });
+            }
+        </script>
+    </body>
+
+</html>
